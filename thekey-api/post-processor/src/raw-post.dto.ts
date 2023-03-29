@@ -6,6 +6,7 @@ import {
   IsUrl,
   ValidateNested,
 } from 'class-validator';
+import { RenderedContent } from './rendered-content.dto';
 
 export class RawPost {
   @IsInt()
@@ -27,8 +28,4 @@ export class RawPost {
 
   @IsDateString()
   date_gmt: string;
-}
-
-class RenderedContent {
-  rendered: string;
 }

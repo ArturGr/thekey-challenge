@@ -15,73 +15,29 @@ export class AppService {
     data: ProcessPostEvent,
   ): Promise<PostProcessedResponse> {
     try {
-      const postInstance = plainToInstance(RawPost, data.processPost);
-      const validated = await validate(postInstance);
-      if (validated.length > 0) {
-        this.logger.error(JSON.stringify(validated));
-        return undefined;
-      }
+      const rawPost = await this.validateRawPost(data.processPost);
+      if (!rawPost) return;
 
-      const htmlToTextOptions: HtmlToTextOptions = {
-        wordwrap: null,
-        selectors: [
-          {
-            selector: 'a',
-            format: 'paragraph',
-          },
-          {
-            selector: 'img',
-            format: 'skip',
-          },
-        ],
-      };
+      const titleText = this.convertHtmlToText(rawPost.title.rendered);
+      const titleWords = this.getWordsListFromText(titleText);
 
-      const titleHtml = postInstance.title.rendered;
-      const titleText = convert(titleHtml, htmlToTextOptions, {
-        ignoreHref: true,
-      });
+      const contentText = this.convertHtmlToText(rawPost.content.rendered);
+      const contentWords = this.getWordsListFromText(contentText);
 
-      const titleWords = titleText
-        .split(/\s+/g)
-        .map((word) =>
-          word
-            .replace(/(^\p{Punctuation}+)|(\p{Punctuation}+$)/gu, '')
-            .toLowerCase(),
-        )
-        .filter(Boolean);
-
-      const contentHtml = postInstance.content.rendered;
-      const contentText = convert(contentHtml, htmlToTextOptions, {
-        ignoreHref: true,
-      });
-
-      const contentWords = contentText
-        .split(/\s+/g)
-        .map((word) =>
-          word
-            .replace(/(^\p{Punctuation}+)|(\p{Punctuation}+$)/gu, '')
-            .toLowerCase(),
-        )
-        .filter(Boolean);
-
-      const titleFrequenciesByWord = titleWords.reduce(
-        (map, word) => map.set(word, (map.get(word) || 0) + 1),
-        new Map<string, number>(),
-      );
-      const frequenciesByWord = contentWords.reduce(
-        (map, word) => map.set(word, (map.get(word) || 0) + 1),
-        titleFrequenciesByWord,
+      const frequenciesByWord = this.countWordsFrequencies(
+        titleWords,
+        contentWords,
       );
 
-      const id = String(postInstance.id);
+      const id = String(rawPost.id);
 
       const post = new Post(
         id,
         titleText,
         contentText,
-        postInstance.status,
-        postInstance.link,
-        postInstance.date_gmt,
+        rawPost.status,
+        rawPost.link,
+        rawPost.date_gmt,
       );
 
       return new PostProcessedResponse(post, [...frequenciesByWord.entries()]);
@@ -89,5 +45,60 @@ export class AppService {
       this.logger.error(error);
       return undefined;
     }
+  }
+
+  async validateRawPost(post: any): Promise<RawPost | undefined> {
+    const postInstance = plainToInstance(RawPost, post);
+    const validated = await validate(postInstance);
+    if (validated.length > 0) {
+      this.logger.error(JSON.stringify(validated));
+      return undefined;
+    }
+    return postInstance;
+  }
+
+  convertHtmlToText(html: string) {
+    const htmlToTextOptions: HtmlToTextOptions = {
+      wordwrap: null,
+      selectors: [
+        {
+          selector: 'h1',
+          format: 'paragraph',
+        },
+        {
+          selector: 'a',
+          format: 'paragraph',
+        },
+        {
+          selector: 'img',
+          format: 'skip',
+        },
+      ],
+    };
+
+    const text = convert(html, htmlToTextOptions, {
+      ignoreHref: true,
+    });
+    return text;
+  }
+
+  getWordsListFromText(text: string) {
+    const wordsList = text
+      .split(/\s+/g)
+      .map((word) =>
+        word
+          .replace(/(^\p{Punctuation}+)|(\p{Punctuation}+$)/gu, '')
+          .toLowerCase(),
+      )
+      .filter(Boolean);
+    return wordsList;
+  }
+
+  countWordsFrequencies(...wordLists: string[][]): Map<string, number> {
+    const map = new Map<string, number>();
+    wordLists.forEach((list) => {
+      list.reduce((map, word) => map.set(word, (map.get(word) || 0) + 1), map);
+    });
+    return map;
   }
 }

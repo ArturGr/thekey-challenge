@@ -11,9 +11,12 @@ describe('AppController (e2e)', () => {
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule, ClientsModule.register([
-        { name: 'THEKEYBACKEND', transport: Transport.TCP },
-      ])],
+      imports: [
+        AppModule,
+        ClientsModule.register([
+          { name: 'THEKEYBACKEND', transport: Transport.TCP },
+        ]),
+      ],
     }).compile();
 
     app = moduleFixture.createNestApplication();
@@ -22,7 +25,7 @@ describe('AppController (e2e)', () => {
       transport: Transport.TCP,
     });
 
-    app.startAllMicroservices()
+    app.startAllMicroservices();
     await app.init();
 
     client = app.get('THEKEYBACKEND');
@@ -62,7 +65,7 @@ describe('AppController (e2e)', () => {
       { cmd: 'process_post' },
       new ProcessPostEvent(testRawPost),
     );
-    response.pipe(first()).subscribe(json => {
+    response.pipe(first()).subscribe((json) => {
       expect(json).toStrictEqual(postProcessResult);
 
       done();
