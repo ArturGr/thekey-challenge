@@ -37,8 +37,14 @@ cd thekey-api/post-processor && yarn run test
 cd thekey-api/thekey-backend && yarn run test
 ```
 
-## Api and microservice e2e tests 
+## Api e2e tests
+You need to start the microservice in a separate terminal before running the e2e test 
+```sh
+cd thekey-api/post-processor && yarn run start
+cd thekey-api/thekey-backend && yarn run test:e2e
+```
+
+## Microservice e2e tests 
 ```sh
 cd thekey-api/post-processor && yarn run test:e2e
-cd thekey-api/thekey-backend && yarn run test:e2e
 ```
