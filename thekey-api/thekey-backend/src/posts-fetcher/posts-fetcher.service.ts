@@ -19,11 +19,8 @@ export class PostsFetcherService {
     private eventEmitter: EventEmitter2,
   ) {}
 
-  private loaded = false;
   @Cron(CronExpression.EVERY_10_SECONDS)
   async fetchNewPosts() {
-    if (this.loaded) return;
-    this.loaded = true;
     try {
       const postsBody = await fetch(this.postsUrl).then((r) => r.text());
       const posts = JSON.parse(postsBody);
