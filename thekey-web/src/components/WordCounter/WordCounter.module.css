@@ -1,0 +1,19 @@
+.row {
+  display: inline-flex;
+  margin: 3px;
+  padding: 4px 6px;
+  border: 1px solid #dbdbdb;
+  border-radius: 4px;
+  font-size: 15px;
+  cursor: default;
+}
+
+.row:hover {
+  background-color: lightblue;
+  cursor: pointer;
+}
+
+.word {
+  font-weight: 500;
+  margin-right: 10px;
+}

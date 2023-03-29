@@ -1,0 +1,33 @@
+.row {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  margin: 10px;
+  padding: 10px;
+  border: 1px solid #dbdbdb;
+  border-radius: 10px;
+  height: 250px;
+}
+
+.title {
+  display: flex;
+ justify-content: center;
+  font-weight: 500;
+  font-size: 30px;
+  margin-top: 10px;
+  flex: 1;
+}
+
+.subtitle {
+  display: flex;
+  justify-content: center;
+  font-weight: 300;
+  font-size: 24px;
+  margin-top: 10px;
+  flex: 1;
+}
+
+.text {
+  font-weight: 300;
+  font-size: 120px;
+}
