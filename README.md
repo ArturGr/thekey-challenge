@@ -28,7 +28,7 @@ You can test every module with the following commands
 
 ## React App tests
 ```sh
-cd thekey-web && npm run test a
+cd thekey-web && npm run test
 ```
 
 ## Api and microservice tests
