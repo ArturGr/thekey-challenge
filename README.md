@@ -1,8 +1,15 @@
 # thekey-challenge
 A fullstack challenge from thekey.academy
 
+# Installation
+First clone this repository.
+```sh
+git clone git@github.com:ArturGr/thekey-challenge.git
+```
+git@github.com:ArturGr/thekey-challenge.git
+
 # Presentation
-First install all the node modules
+Install all the node modules before starting up.
 ```sh
 (cd thekey-web && npm install ) && (cd thekey-api/post-processor && yarn ) && (cd thekey-api/thekey-backend && yarn )
 ```
